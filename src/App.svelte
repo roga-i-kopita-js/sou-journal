@@ -7,7 +7,6 @@
   import List, { Item, Text } from '@smui/list';
   import { listStore } from './stores/List';
   import type { List as TList } from './stores/types';
-  import Chart from './pages/Chart.svelte';
 
   enum Pages {
     sou = 'sou',
@@ -60,12 +59,6 @@
         >
           <Text>Калькулятор</Text>
         </Item>
-        <Item
-          activated={isChart}
-          on:click={goToChart}
-        >
-          <Text>Графики</Text>
-        </Item>
       </List>
     </Content>
   </Drawer>
@@ -76,8 +69,6 @@
         <Home />
       {:else if isSou}
         <Sou />
-      {:else if isChart}
-        <Chart />
       {/if}
     </main>
   </AppContent>

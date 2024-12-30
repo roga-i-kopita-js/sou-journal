@@ -3,15 +3,23 @@
   import type { Representation } from '../stores/types';
   import Button, { Label } from '@smui/button';
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-
+  import * as XLSX from 'xlsx';
 
   export let representation: Representation;
   export let startToUpdate: () => void;
   export let deleteColumn: () => void;
+
+  const downloadXls = function(formId: string, name: string): void {
+    // Получаем таблицу
+    const table = document.getElementById(formId);
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+    XLSX.writeFile(workbook, `${name}.xlsx`);
+  };
 </script>
 
 
 <div style='margin-bottom: 30px'>
+
   <Accordion multiple>
     <Panel>
       <Header>
@@ -45,10 +53,13 @@
                 <p>Кол-во "3": <b style='font-weight: bold;'>{representation.result.threeMarksCount}</b></p>
                 <p>Кол-во "2": <b style='font-weight: bold;'>{representation.result.twoMarksCount}</b></p>
                 <p>Неуспевающие: <b style='font-weight: bold;'>{representation.result.badPerformancePercent} %</b></p>
-                <p>Успеваемость: <b style='font-weight: bold;'>{representation.result.positivePerformancePercent} %</b></p>
-                <p>Качество знаний: <b style='font-weight: bold;'>{representation.result.perfectPerformancePercent} %</b></p>
+                <p>Успеваемость: <b style='font-weight: bold;'>{representation.result.positivePerformancePercent} %</b>
+                </p>
+                <p>Качество знаний: <b style='font-weight: bold;'>{representation.result.perfectPerformancePercent}
+                  %</b></p>
                 <p>СОУ: <b style='font-weight: bold;'>{representation.result.sou} %</b></p>
                 <p>Средняя оценка: <b style='font-weight: bold;'>{representation.result.averageMark} %</b></p>
+
               </div>
 
               {#if (representation.difference)}
@@ -58,13 +69,18 @@
                   <p>Имеет оценку: <b style='font-weight: bold;'>{representation.difference.result.hasReview}</b></p>
                   <p>Кол-во "5": <b style='font-weight: bold;'>{representation.difference.result.fiveMarksCount}</b></p>
                   <p>Кол-во "4": <b style='font-weight: bold;'>{representation.difference.result.fourMarksCount}</b></p>
-                  <p>Кол-во "3": <b style='font-weight: bold;'>{representation.difference.result.threeMarksCount}</b></p>
+                  <p>Кол-во "3": <b style='font-weight: bold;'>{representation.difference.result.threeMarksCount}</b>
+                  </p>
                   <p>Кол-во "2": <b style='font-weight: bold;'>{representation.difference.result.twoMarksCount}</b></p>
-                  <p>Неуспевающие: <b style='font-weight: bold;'>{representation.difference.result.badPerformancePercent} %</b></p>
-                  <p>Успеваемость: <b style='font-weight: bold;'>{representation.difference.result.positivePerformancePercent} %</b></p>
-                  <p>Качество знаний: <b style='font-weight: bold;'>{representation.difference.result.perfectPerformancePercent} %</b></p>
+                  <p>Неуспевающие: <b
+                    style='font-weight: bold;'>{representation.difference.result.badPerformancePercent} %</b></p>
+                  <p>Успеваемость: <b
+                    style='font-weight: bold;'>{representation.difference.result.positivePerformancePercent} %</b></p>
+                  <p>Качество знаний: <b
+                    style='font-weight: bold;'>{representation.difference.result.perfectPerformancePercent} %</b></p>
                   <p>СОУ: <b style='font-weight: bold;'>{representation.difference.result.sou} %</b></p>
-                  <p>Средняя оценка: <b style='font-weight: bold;'>{representation.difference.result.averageMark} %</b></p>
+                  <p>Средняя оценка: <b style='font-weight: bold;'>{representation.difference.result.averageMark} %</b>
+                  </p>
                 </div>
               {/if}
 
@@ -72,9 +88,10 @@
             {#if (representation.difference)}
               <div style='margin-right: 20px'>
                 <div>
-                  <h4 style='border-bottom: 1px solid black; font-weight: bold'>Было: {representation.difference.name}</h4>
+                  <h4 style='border-bottom: 1px solid black; font-weight: bold'>
+                    Было: {representation.difference.name}</h4>
                 </div>
-                <table>
+                <table id="first">
                   <thead>
                   <tr>
                     <td><h5 style='margin: 0; padding-left: 10px;'>Фамилия Имя Отчество</h5></td>
@@ -90,6 +107,8 @@
                   {/each}
                   </tbody>
                 </table>
+
+                <button on:click={() => downloadXls('first', representation.difference.name)}>Выгрузить xls</button>
               </div>
             {/if}
 
@@ -99,7 +118,7 @@
                   <h4 style='border-bottom: 1px solid black; font-weight: bold'>Cейчас: {representation.columnName}</h4>
                 </div>
               {/if}
-              <table>
+              <table id="second">
                 <thead>
                 {#if (representation.difference)}
                   <tr>
@@ -128,6 +147,8 @@
                   {/if}
                 {/each}
                 </tbody>
+
+                <button on:click={() => downloadXls('second', representation.name)}>Выгрузить xls</button>
               </table>
             </div>
           </div>
